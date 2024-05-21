@@ -12,3 +12,11 @@ SELECT * FROM users WHERE email = $1;
 
 -- name: DeleteUser :exec
 DELETE FROM users WHERE id = $1;
+
+
+-- name: UpdateUser :one
+UPDATE users SET updated_at = NOW(), first_name = $2, last_name = $3, phone = $4 WHERE id = $1 RETURNING *;
+
+
+-- name: UpdateUserPassword :exec
+UPDATE users SET updated_at = NOW(), password = $2 WHERE id = $1;

@@ -8,6 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"log"
+	"net"
 	"os"
 )
 
@@ -33,9 +34,22 @@ func main() {
 	// setup routes
 	router.SetupRoutes(app)
 
+	config.AddSwaggerRoutes(app)
+
 	port := os.Getenv("PORT")
+
+	// Check if the port is available
+	listener, err := net.Listen("tcp", ":"+port)
+	if err != nil {
+		fmt.Printf("Port %s is already in use.\n", port)
+		return
+	}
+	// Close the listener immediately, as it was just for checking port availability
+	listener.Close()
+
 	err = app.Listen(":" + port)
 	if err != nil {
+
 		panic(err)
 	}
 }

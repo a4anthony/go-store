@@ -12,7 +12,7 @@ goose-redo:
 	cd sql/schema &&  goose postgres $(DB_URL) redo && cd ../../ && sqlc generate
 
 goose-reset:
-	cd sql/schema &&  goose postgres $(DB_URL) redo && cd ../../ && sqlc generate
+	cd sql/schema &&  goose postgres $(DB_URL) reset && cd ../../ && sqlc generate
 
 
 goose-refresh:
@@ -20,4 +20,4 @@ goose-refresh:
 
 
 db-seed:
-	go run seeds.go
+	go run seed/seeds.go

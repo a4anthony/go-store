@@ -11,6 +11,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
 	"golang.org/x/crypto/bcrypt"
+	"log"
 )
 
 type RegisterParams struct {
@@ -18,12 +19,12 @@ type RegisterParams struct {
 	LastName  string `validate:"required,min=2,max=32" json:"last_name"`
 	Phone     string `validate:"required,numeric" json:"phone"`
 	Email     string `validate:"required,email" json:"email"`
-	Password  string `validate:"required,min=6,max=32" json:"password"`
+	Password  string `validate:"required,min=8,max=32" json:"password"`
 }
 
 type LoginParams struct {
 	Email    string `validate:"required,email" json:"email"`
-	Password string `validate:"required,min=6,max=32" json:"password"`
+	Password string `validate:"required,min=8,max=32" json:"password"`
 }
 
 type UserResponse struct {
@@ -94,6 +95,17 @@ func Register(c *fiber.Ctx) error {
 	})
 }
 
+// Login godoc
+// @Summary Login
+// @Description Login
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param email body string true "Email"
+// @Param password body string true "Password"
+// @Success 200 {object} UserResponse
+// @Failure 400 {object} utils.ErrorMsg
+// @Router /auth/login [post]
 func Login(c *fiber.Ctx) error {
 	params := new(LoginParams)
 	err := utils.CheckParams(c, params)
@@ -109,12 +121,13 @@ func Login(c *fiber.Ctx) error {
 
 	user, err := config.DB.GetUserByEmail(c.Context(), params.Email)
 	if err != nil {
+		log.Printf("Error: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"message": err.Error(),
+			"message": "Invalid credentials",
 		})
 	}
-	err = utils.VerifyPassword(params.Password, user.Password)
 
+	err = utils.VerifyPassword(params.Password, user.Password)
 	if err != nil && errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"message": "Invalid credentials",

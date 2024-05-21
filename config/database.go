@@ -11,6 +11,12 @@ import (
 
 var DB *database.Queries
 
+//var DBFilter *handlers.QueriesFilter
+
+//func NewFilter(db database.DBTX) *handlers.QueriesFilter {
+//	return &handlers.QueriesFilter{Db: db}
+//}
+
 func ConnectDb() {
 	dbUrl := os.Getenv("DB_URL")
 	if dbUrl == "" {
@@ -26,4 +32,5 @@ func ConnectDb() {
 	fmt.Println("Connected to database!")
 	db := database.New(conn)
 	DB = db
+	//DBFilter = NewFilter(conn)
 }

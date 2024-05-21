@@ -6,3 +6,12 @@ sql:
     gen:
       go:
         out: "internal/database"
+        overrides:
+          - db_type: "uuids"
+            go_type:
+              import: "github.com/google/uuidxx"
+              type: "UUIDSss"
+          - db_type: "bool"
+            go_type:
+              import: "database/sql"
+              type: "NullBool"
